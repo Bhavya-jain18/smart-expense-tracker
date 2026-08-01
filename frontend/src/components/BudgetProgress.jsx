@@ -1,9 +1,11 @@
+import { motion } from 'framer-motion'
+
 const BudgetProgress = ({ budgetUsed, budgetRemaining, budget }) => {
   const used = Number(budget || 0) === 0 ? 0 : Math.min(100, Math.round((budgetUsed / budget) * 100))
   const status = used >= 100 ? 'critical' : used >= 90 ? 'warning' : used >= 70 ? 'alert' : 'healthy'
 
   return (
-    <div className="budget-card">
+    <motion.div className="budget-card" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <div className="budget-header">
         <div>
           <p className="summary-label">Monthly Budget</p>
@@ -13,14 +15,14 @@ const BudgetProgress = ({ budgetUsed, budgetRemaining, budget }) => {
       </div>
       <div className="progress-wrapper">
         <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${used}%` }} />
+          <motion.div className="progress-fill" initial={{ width: 0 }} animate={{ width: `${used}%` }} transition={{ duration: 0.6 }} />
         </div>
         <div className="progress-details">
           <span>Used: {used}%</span>
           <span>Remaining: £{budgetRemaining.toFixed(2)}</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

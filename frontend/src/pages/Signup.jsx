@@ -1,4 +1,5 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useSignup } from '../hooks/useSignup'
 import { useAuthContext } from '../hooks/useAuthContext'
@@ -26,7 +27,14 @@ const Signup = () => {
 
   return (
     <div className="auth-shell">
-      <form className="auth-card" onSubmit={handleSubmit}>
+      <motion.form
+        className="auth-card"
+        onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        whileHover={{ y: -4, scale: 1.01 }}
+      >
         <h2>Create your account</h2>
         <p>Secure signup for personalized expense tracking.</p>
 
@@ -54,7 +62,7 @@ const Signup = () => {
         <p className="auth-footer">
           Already have an account? <Link to="/login">Log in</Link>
         </p>
-      </form>
+      </motion.form>
     </div>
   )
 }

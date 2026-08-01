@@ -55,7 +55,7 @@ const Dashboard = () => {
     datasets: [
       {
         data: Object.values(analyticsData.categoryTotals || {}),
-        backgroundColor: ['#16a34a', '#14b8a6', '#0f766e', '#059669', '#047857', '#065f46'],
+        backgroundColor: ['#a65c5c', '#b78274', '#6f7d8c', '#8d6b6b', '#8d5b5b', '#53616f'],
         borderWidth: 0
       }
     ]
@@ -67,8 +67,8 @@ const Dashboard = () => {
       {
         label: 'Monthly spending',
         data: [1200, 980, 1420, analyticsData.monthlyExpense || 0],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16,185,129,0.15)',
+        borderColor: '#a65c5c',
+        backgroundColor: 'rgba(166,92,92,0.15)',
         tension: 0.4
       }
     ]

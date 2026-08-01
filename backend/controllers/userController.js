@@ -6,6 +6,13 @@ const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' })
 }
 
+const formatDisplayName = (email) => {
+  return email
+    .split('@')[0]
+    .replace(/[_.-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
 // login a user
 const loginUser = async (req, res) => {
   const { email, password } = req.body
@@ -14,7 +21,7 @@ const loginUser = async (req, res) => {
     const user = await User.login(email, password)
     const token = createToken(user._id)
 
-    res.status(200).json({ email: user.email, token, budget: user.budget, _id: user._id })
+    res.status(200).json({ email: user.email, token, budget: user.budget, _id: user._id, name: formatDisplayName(user.email) })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
@@ -28,7 +35,7 @@ const signupUser = async (req, res) => {
     const user = await User.signup(email, password)
     const token = createToken(user._id)
 
-    res.status(201).json({ email: user.email, token, budget: user.budget, _id: user._id })
+    res.status(201).json({ email: user.email, token, budget: user.budget, _id: user._id, name: formatDisplayName(user.email) })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
@@ -39,7 +46,7 @@ const getCurrentUser = async (req, res) => {
     return res.status(401).json({ error: 'Not authorized' })
   }
 
-  res.status(200).json({ email: req.user.email, budget: req.user.budget, _id: req.user._id })
+  res.status(200).json({ email: req.user.email, budget: req.user.budget, _id: req.user._id, name: formatDisplayName(req.user.email) })
 }
 
 const updateCurrentUser = async (req, res) => {
