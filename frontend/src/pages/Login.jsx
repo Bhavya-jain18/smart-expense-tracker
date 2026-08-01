@@ -1,114 +1,69 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiTrendingUp, FiShield, FiClock, FiUsers } from 'react-icons/fi'
+import { useState } from 'react'
+import { useLogin } from '../hooks/useLogin'
+import { useAuthContext } from '../hooks/useAuthContext'
+import { toast } from 'react-hot-toast'
 
-const featureCards = [
-  {
-    title: 'Secure login',
-    description: 'JWT authentication and user-specific expense data keeps your records safe.',
-    icon: FiShield
-  },
-  {
-    title: 'Smart analytics',
-    description: 'Get category trends, budget alerts, and spending insights powered by intelligent rules.',
-    icon: FiTrendingUp
-  },
-  {
-    title: 'Fast capture',
-    description: 'Quickly add daily expenses with category, payment method, notes, and date support.',
-    icon: FiClock
-  },
-  {
-    title: 'Personal dashboard',
-    description: 'Stay organized with a clean dashboard, expense history, and profile controls.',
-    icon: FiUsers
+const Login = () => {
+  const { user } = useAuthContext()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const { login, isLoading, error } = useLogin()
+  const navigate = useNavigate()
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />
   }
-]
 
-const Landing = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const success = await login(email, password)
+    if (success) {
+      toast.success('Welcome back!')
+      navigate('/dashboard')
+    }
+  }
+
   return (
-    <div className="landing-page">
-      <section className="hero-section">
-        <div className="hero-copy">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <p className="eyebrow">Smart Expense Tracker</p>
-            <h1>Track spending, stay on budget, and get intelligent insights.</h1>
-            <p className="hero-description">
-              Manage every expense in one polished dashboard with category analytics, budget progress, and rule-based AI insights.
-            </p>
-            <div className="hero-actions">
-              <Link className="primary-button" to="/signup">Start free</Link>
-              <Link className="secondary-button" to="/login">I already have an account</Link>
-            </div>
-          </motion.div>
-        </div>
-        <motion.div className="hero-visual" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
-          <div className="hero-card">
-            <div className="hero-card-header">
-              <span>Monthly budget</span>
-              <strong>£2,500</strong>
-            </div>
-            <div className="hero-card-body">
-              <div className="stat-block">
-                <span>Spent</span>
-                <strong>£1,490</strong>
-              </div>
-              <div className="stat-block">
-                <span>Remaining</span>
-                <strong>£1,010</strong>
-              </div>
-            </div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '60%' }} />
-            </div>
-          </div>
-        </motion.div>
-      </section>
+    <div className="auth-shell">
+      <motion.form
+        className="auth-card"
+        onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        whileHover={{ y: -4, scale: 1.01 }}
+      >
+        <h2>Welcome back</h2>
+        <p>Log in to access your expense dashboard.</p>
 
-      <section className="feature-grid">
-        {featureCards.map((feature, index) => {
-          const Icon = feature.icon
-          return (
-            <motion.div
-              key={feature.title}
-              className="feature-card"
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              whileHover={{ y: -6, scale: 1.01 }}
-              transition={{ duration: 0.35, delay: index * 0.08 }}
-            >
-              <Icon className="feature-icon" />
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-            </motion.div>
-          )
-        })}
-      </section>
+        <label>Email</label>
+        <input
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          required
+        />
 
-      <section className="testimonial-section">
-        <h2>Built for modern budgets</h2>
-        <div className="testimonial-grid">
-          <motion.article className="testimonial-card" whileHover={{ y: -6, scale: 1.01 }} transition={{ duration: 0.25 }}>
-            <p>“Smart Expense Tracker helped me spot overspending at the weekend and save more each month.”</p>
-            <strong>– Maya R.</strong>
-          </motion.article>
-          <motion.article className="testimonial-card" whileHover={{ y: -6, scale: 1.01 }} transition={{ duration: 0.25 }}>
-            <p>“The dashboard is crisp, responsive, and the AI insights are genuinely useful.”</p>
-            <strong>– Jason K.</strong>
-          </motion.article>
-          <motion.article className="testimonial-card" whileHover={{ y: -6, scale: 1.01 }} transition={{ duration: 0.25 }}>
-            <p>“I love how easy it is to track categories and stay within budget without manual spreadsheets.”</p>
-            <strong>– Priya S.</strong>
-          </motion.article>
-        </div>
-      </section>
+        <label>Password</label>
+        <input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          required
+        />
 
-      <footer className="landing-footer">
-        <p>Smart Expense Tracker © 2026 · Crafted for clearer spending</p>
-      </footer>
+        <button type="submit" className="primary-button" disabled={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </button>
+        {error && <div className="form-error">{error}</div>}
+        <p className="auth-footer">
+          New here? <Link to="/signup">Create an account</Link>
+        </p>
+      </motion.form>
     </div>
   )
 }
 
-export default Landing
+export default Login
